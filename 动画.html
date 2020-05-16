@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas动画</title>
+</head>
+<body style="text-align: center;">
+<!--注意: 标签通常需要指定一个id属性 (脚本中经常引用), width 和 height 属性定义的画布的大小.-->
+<canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;display: inline-block">your browser does not support HTML5 Canvas</canvas>
+</body>
+<script>
+    /**首先，找到 <canvas> 元素:**/
+    var c=document.getElementById("myCanvas");
+    /**然后，创建 context 对象：getContext("2d") 对象是内建的 HTML5 对象，拥有多种绘制路径、矩形、圆形、字符以及添加图像的方法**/
+    var ctx=c.getContext("2d");
+    /**绘制一个红色的矩形**/
+    ctx.fillStyle="#FF0000";//设置fillStyle属性可以是CSS颜色，渐变，或图案。fillStyle 默认设置是#000000（黑色）
+    /**在画布上绘制 150x75 的矩形，从左上角开始 (0,0)。**/
+    ctx.fillRect(0,0,150,75);//illRect(x,y,width,height) 方法定义了矩形当前的填充方式
+    //第一件事，监听整个页面是否已经加载，并且开始操作前所有的Html 元素已经展现，（canvas 图形与声音处理极为重要）
+    //第二件事，就是独立的canvasJavaScript代码封装。
+    window.addEventListener('load',eventWindowLoaded,false);
+    function eventWindowLoaded() {
+        console.log('页面加载完成~~~~')
+
+    }
+</script>
+</html>

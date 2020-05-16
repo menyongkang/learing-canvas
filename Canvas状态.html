@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>矩形</title>
+    <script src="js/modernizr.js"></script>
+</head>
+<body>
+<div style="position: absolute;top: 50px;left: 50px;">
+    <!--注意: 标签通常需要指定一个id属性 (脚本中经常引用), width 和 height 属性定义的画布的大小.-->
+    <canvas id="canvasOne" width="500" height="500">
+        Your browser does not support HTML5 Canvas
+    </canvas>
+</div>
+</body>
+<script type="text/javascript">
+    //第一件事，监听整个页面是否已经加载，并且开始操作前所有的Html 元素已经展现，（canvas 图形与声音处理极为重要）
+    //第二件事，就是独立的canvasJavaScript代码封装。
+    window.addEventListener('load', eventWindowLoaded, false);
+
+    function eventWindowLoaded() {
+        console.log('页面加载完成~~~~');
+        canvasApp()//主函数
+    }
+
+    //属性验证规则
+    function canvasSupport() {
+        return Modernizr.canvas;
+    }
+
+    //主函数---逻辑数据处理
+    function canvasApp() {
+        if (!canvasSupport) {
+            return;
+        }
+        //定义局部变量，局限本地封装的函数内
+        var theCanvase = document.getElementById("canvasOne");
+        var ctx = theCanvase.getContext("2d");
+
+        //实际的CanvasAPI代码，即绘图代码
+        function drawScreen() {
+            //绘图堆栈状态
+            //当前路径，当前位图不属于保存状态
+            //保存和恢复Canvas状态
+            //保存当前状态到堆栈
+            ctx.save();
+            //恢复画布
+            ctx.restore();
+
+        }
+
+        drawScreen();
+    }
+</script>
+</html>

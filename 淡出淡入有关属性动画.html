@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>淡出淡入动画</title>
+    <script src="js/modernizr.js"></script>
+</head>
+<body>
+<div style="position: absolute;top: 50px;left: 50px;">
+    <!--注意: 标签通常需要指定一个id属性 (脚本中经常引用), width 和 height 属性定义的画布的大小.-->
+    <canvas id="canvasOne" width="640" height="480">
+        Your browser does not support HTML5 Canvas
+    </canvas>
+</div>
+</body>
+<script type="text/javascript">
+    //第一件事，监听整个页面是否已经加载，并且开始操作前所有的Html 元素已经展现，（canvas 图形与声音处理极为重要）
+    //第二件事，就是独立的canvasJavaScript代码封装。
+    window.addEventListener('load', eventWindowLoaded, false);
+
+    function eventWindowLoaded() {
+        console.log('页面加载完成~~~~);
+        canvasApp()//主函数
+    }
+
+    //属性验证规则
+    function canvasSupport() {
+        return Modernizr.canvas;
+    }
+
+    //主函数---逻辑数据处理
+    function canvasApp() {
+        if (!canvasSupport) {
+            return;
+        }
+        //定义默认参数
+        var text='你好，北京！';//保存用于显示的文字
+        var alpha=0;//用于保存文字的透明度
+        var fadeIn=true;//用于标示文字是淡出淡入。
+
+        //定义局部变量，局限本地封装的函数内
+        var theCanvase = document.getElementById("canvasOne");
+        var ctx = theCanvase.getContext("2d");
+        var imageObj=new Image();//声明img对象，用于保存图片对象
+        imageObj.src='emma-watson-9.jpg';
+        imageObj.style.width=640+'px';
+        imageObj.style.height=480+'px';
+        imageObj.style.display="inline-block";
+
+        //实际的CanvasAPI代码，即绘图代码
+        function drawScreen() {
+            /**清除并显示背景**/
+            //背景，
+           ctx.globalAlpha=1;//设置动画的默认透明度，ctx.globalAlpha属性会影响后续的绘制的所有对象，需要在将对象绘制在画布之前重置该属性。
+           ctx.fillStyle='#000000';//设置背景颜色
+           ctx.fillRect(0,0,640,480);//设置背景大小
+           //图像
+            ctx.globalAlpha=.25;
+            ctx.drawImage(imageObj,0,0);
+            /**根据fadeIn更新globalAlpha属性值**/
+
+            if(fadeIn){//淡出（true）
+                alpha+=0.01;//递增0.01
+                if(alpha>=1){//如果大于1
+                    alpha=1;//重置为1
+                    fadeIn=false;//开始淡出
+                }
+            }else {//淡出（false）
+                alpha-=0.01;//递减
+                if(alpha<0){//如果小于0
+                    alpha=0;//重置为0
+                    fadeIn=true;//开始淡入
+                }
+            }
+            //透明属属性赋值
+            ctx.globalAlpha=alpha;
+            //文本
+            ctx.font='72px Sans-Serif';//字体设置
+            ctx.textBaseline='top';//对齐方式
+            ctx.fillStyle='#ffffff';//文字颜色
+            ctx.fillText(text,150,200);//绘制文字
+
+        }
+
+        drawScreen();
+        //动画循环函数
+        function gameLoop() {
+            window.setTimeout(gameLoop,20);//20m回调，每次循环都会清除自己。
+            drawScreen();
+        }
+        gameLoop();
+    }
+
+
+</script>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>弧线</title>
+    <script src="js/modernizr.js"></script>
+</head>
+<body>
+<div style="position: absolute;top: 50px;left: 50px;">
+    <!--注意: 标签通常需要指定一个id属性 (脚本中经常引用), width 和 height 属性定义的画布的大小.-->
+    <canvas id="canvasOne" width="640" height="480">
+        Your browser does not support HTML5 Canvas
+    </canvas>
+</div>
+</body>
+<script type="text/javascript">
+    //第一件事，监听整个页面是否已经加载，并且开始操作前所有的Html 元素已经展现，（canvas 图形与声音处理极为重要）
+    //第二件事，就是独立的canvasJavaScript代码封装。
+    window.addEventListener('load', eventWindowLoaded, false);
+
+    function eventWindowLoaded() {
+        console.log('页面加载完成~~~~');
+        canvasApp()//主函数
+    }
+
+    //属性验证规则
+    function canvasSupport() {
+        return Modernizr.canvas;
+    }
+
+    //主函数---逻辑数据处理
+    function canvasApp() {
+        if (!canvasSupport) {
+            return;
+        }
+        //定义局部变量，局限本地封装的函数内
+        var theCanvase = document.getElementById("canvasOne");
+        var ctx = theCanvase.getContext("2d");
+
+        //实际的CanvasAPI代码，即绘图代码
+        function drawScreen() {
+            //ctx.arcTo(x1,y1,x2,y2,radius);，要求当前至少有一个子路径
+            //x1和y1，圆弧的起点位置与当前路径的位置到（x1,y1）的直线相切，
+            //x2和y2，圆弧的终点与（x1,y1）点到（x2,y2）的直线相切，
+            // radius定义弧线的半径，
+            ctx.strokeStyle="#000000";
+            ctx.lineWidth=5;
+            ctx.beginPath();
+            ctx.moveTo(0,0);
+            ctx.lineTo(100,200);
+            ctx.arcTo(350,350,100,100,30);
+            ctx.stroke();
+            ctx.closePath();
+
+        }
+
+        drawScreen();
+    }
+</script>
+</html>

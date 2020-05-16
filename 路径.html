@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>使用路径创建线段</title>
+    <script src="js/modernizr.js"></script>
+</head>
+<body>
+<div style="position: absolute;top: 50px;left: 50px;">
+    <!--注意: 标签通常需要指定一个id属性 (脚本中经常引用), width 和 height 属性定义的画布的大小.-->
+    <canvas id="canvasOne" width="640" height="480">
+        Your browser does not support HTML5 Canvas
+    </canvas>
+</div>
+</body>
+<script type="text/javascript">
+    //第一件事，监听整个页面是否已经加载，并且开始操作前所有的Html 元素已经展现，（canvas 图形与声音处理极为重要）
+    //第二件事，就是独立的canvasJavaScript代码封装。
+    window.addEventListener('load', eventWindowLoaded, false);
+
+    function eventWindowLoaded() {
+        console.log('页面加载完成~~~~');
+        canvasApp()//主函数
+    }
+
+    //属性验证规则
+    function canvasSupport() {
+        return Modernizr.canvas;
+    }
+
+    //主函数---逻辑数据处理
+    function canvasApp() {
+        if (!canvasSupport) {
+            return;
+        }
+        //定义局部变量，局限本地封装的函数内
+        var theCanvase = document.getElementById("canvasOne");
+        var ctx = theCanvase.getContext("2d");
+
+        //实际的CanvasAPI代码，即绘图代码
+        function drawScreen() {
+
+            //使用路径可绘制任何形状，点与线的关系
+            /**直线**/
+            // ctx.strokeStyle='black';//定义线的和形状的颜色和样式
+            // ctx.lineWidth=10;//定义线的宽度
+            // ctx.lineCap='square';//设置中线的端点边缘
+            // ctx.beginPath();//开始路径
+            // ctx.moveTo(20,0);//线的起始点坐标（x，y）
+            // ctx.lineTo(100,0);//线的结束结束点的坐标（x，y）
+            // ctx.stroke();//stroke() 方法会实际地绘制出通过 moveTo() 和 lineTo() 方法定义的路径
+            // ctx.closePath();//结束路径
+            /**圆形端点，斜角链接，在画布的的左上角**/
+
+            ctx.strokeStyle = 'black';//绘制路径的颜色
+            ctx.lineWidth = 10;//定义路径线宽
+            ctx.lineJoin = 'bevel';//两条线相交的交点，链接点
+            ctx.lineCap = 'round';//端点为圆形
+            ctx.beginPath();//开始路径
+            ctx.moveTo(0, 0);//起始点
+            ctx.lineTo(150, 0);//中间点
+            ctx.lineTo(150, 150);
+            ctx.lineTo(0, 150);
+            ctx.stroke();//绘制通过的点
+            ctx.closePath();
+            /**实例2 圆形d端点 ，斜角链接 不在画布的左上角**/
+
+            ctx.beginPath();
+            ctx.moveTo(250,10);
+            ctx.lineTo(350,10);
+            ctx.lineTo(350,160);
+            ctx.lineTo(250,160);
+            ctx.stroke();
+            ctx.closePath();
+
+            /**实例3 平直端点 ，圆角链接 不在画布的左上角**/
+
+            ctx.lineJoin='round';//圆角链接
+            ctx.lineCap='square';//平直端点
+            ctx.beginPath();
+            ctx.moveTo(450,10);
+            ctx.lineTo(550,10);
+            ctx.lineTo(550,160);
+            ctx.lineTo(450,160);//反向线绘制
+            ctx.stroke();
+            ctx.closePath();
+
+
+        }
+
+        drawScreen();
+    }
+</script>
+</html>

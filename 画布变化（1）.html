@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>旋转多个正方形（translate）</title>
+    <script src="js/modernizr.js"></script>
+</head>
+<body>
+<div style="position: absolute;top: 50px;left: 50px;">
+    <!--注意: 标签通常需要指定一个id属性 (脚本中经常引用), width 和 height 属性定义的画布的大小.-->
+    <canvas id="canvasOne" width="640" height="480" style="background: blanchedalmond;">
+        Your browser does not support HTML5 Canvas
+    </canvas>
+</div>
+</body>
+<script type="text/javascript">
+    //第一件事，监听整个页面是否已经加载，并且开始操作前所有的Html 元素已经展现，（canvas 图形与声音处理极为重要）
+    //第二件事，就是独立的canvasJavaScript代码封装。
+    window.addEventListener('load', eventWindowLoaded, false);
+
+    function eventWindowLoaded() {
+        console.log('页面加载完成~~~~');
+        canvasApp()//主函数
+    }
+
+    //属性验证规则
+    function canvasSupport() {
+        return Modernizr.canvas;
+    }
+
+    //主函数---逻辑数据处理
+    function canvasApp() {
+        if (!canvasSupport) {
+            return;
+        }
+        //定义局部变量，局限本地封装的函数内
+        var theCanvase = document.getElementById("canvasOne");
+        var ctx = theCanvase.getContext("2d");
+
+        //实际的CanvasAPI代码，即绘图代码
+        function drawScreen() {
+
+            //绘制一个黑色的正方形
+            ctx.fillStyle='black';
+            ctx.fillRect(20,20,50,50);
+
+            //绘制一个红色的正方形
+            var x=100;
+            var y=100;
+            var width=50;
+            var height=50;
+
+            ctx.setTransform(1,0,0,1,0,0);
+            ctx.translate(x+0.5*width,y+0.5*height);//此函数可以将画布远点移到（x.y）初
+            var angleInRadians=45*Math.PI/180;
+            ctx.rotate(angleInRadians);//之后绘制的图像都受此影响
+            ctx.fillStyle='red';
+            //由于画布原点已经移动到将要绘制形状的位置，绘制对象要从正确的左上角坐标开始，从而从
+            ctx.fillRect(-0.5*width,-0.5*height,width,height);
+            /**变换需要将原点平移到正方形的中心，以使其围绕自己旋转。绘图时，需要将（125,125）当做实际的（0，0）点**/
+
+        }
+
+        drawScreen();
+    }
+</script>
+</html>

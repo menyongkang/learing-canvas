@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>弧线</title>
+    <script src="js/modernizr.js"></script>
+</head>
+<body>
+<div style="position: absolute;top: 50px;left: 50px;">
+    <!--注意: 标签通常需要指定一个id属性 (脚本中经常引用), width 和 height 属性定义的画布的大小.-->
+    <canvas id="canvasOne" width="640" height="480" style="background: blanchedalmond;">
+        Your browser does not support HTML5 Canvas
+    </canvas>
+</div>
+</body>
+<script type="text/javascript">
+    //第一件事，监听整个页面是否已经加载，并且开始操作前所有的Html 元素已经展现，（canvas 图形与声音处理极为重要）
+    //第二件事，就是独立的canvasJavaScript代码封装。
+    window.addEventListener('load', eventWindowLoaded, false);
+
+    function eventWindowLoaded() {
+        console.log('页面加载完成~~~~');
+        canvasApp()//主函数
+    }
+
+    //属性验证规则
+    function canvasSupport() {
+        return Modernizr.canvas;
+    }
+
+    //主函数---逻辑数据处理
+    function canvasApp() {
+        if (!canvasSupport) {
+            return;
+        }
+        //定义局部变量，局限本地封装的函数内
+        var theCanvase = document.getElementById("canvasOne");
+        var ctx = theCanvase.getContext("2d");
+
+        //实际的CanvasAPI代码，即绘图代码
+        function drawScreen() {
+            //在屏幕上绘制一个大方块
+            ctx.fillStyle='black';
+            ctx.fillRect(10,10,200,200);
+            ctx.save();//保存（推送）当前状态到推栈  ？有什么作用 save表示保存save函数之前的状态，
+
+            ctx.beginPath();
+
+            //裁剪画布从（0,0）点值50*50的正方形
+            ctx.rect(0,0,50,50);//设置一个用来绘图的矩形区域的   环境属性
+            //0,0 矩形左上角坐标 50,50矩形的宽度，以像素计算，创建一个矩形，
+            ctx.clip();//把react()函数定义的矩形设置为裁剪区域。 他只显示裁剪区域的部分
+
+            //红色圆
+            ctx.beginPath();
+            ctx.strokeStyle='red';
+            ctx.lineWidth=5;
+            ctx.arc(100,100,100,(Math.PI/180)*0,(Math.PI/180)*360,false);
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.restore();//恢复状态  调用存储的推栈回复画布 restore表示获取save保存的状态
+            /**save和restore之间写了很多状态改变**/
+
+            //再次裁切整个画布--调整裁切范围
+            ctx.beginPath();
+            ctx.rect(0,0,500,500);
+            ctx.clip();
+
+            //绘制一个没有裁切的蓝线
+            ctx.beginPath();
+            ctx.strokeStyle='blue';
+            ctx.lineWidth=5;
+            ctx.arc(100,100,50,(Math.PI/180)*0,(Math.PI/180)*360,false);
+            //整圆
+            ctx.stroke();
+            ctx.closePath();
+
+
+        }
+
+        drawScreen();
+    }
+</script>
+</html>

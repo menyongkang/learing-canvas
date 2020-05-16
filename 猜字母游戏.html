@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>创建一个画布</title>
+    <script src="js/modernizr.js"></script>
+</head>
+<body>
+<div style="position: absolute;top: 50px;left: 50px;">
+    <!--注意: 标签通常需要指定一个id属性 (脚本中经常引用), width 和 height 属性定义的画布的大小.-->
+    <canvas id="canvasOne" width="500" height="400">your browser does
+        not support HTML5 Canvas
+    </canvas>
+</div>
+<form>
+    <input type="button" id="createImageData" value="Export Canvas Image">
+    <input type="button" id="goOn" value="Go on">
+</form>
+</body>
+<script>
+    //第一件事，监听整个页面是否已经加载，并且开始操作前所有的Html 元素已经展现，（canvas 图形与声音处理极为重要）
+    //第二件事，就是独立的canvasJavaScript代码封装。
+    window.addEventListener('load', eventWindowLoaded, false);
+   var Debugger=function () {};
+    Debugger.log=function (message) {
+        try {
+            console.log(message);
+        }catch (e){
+            return
+        }
+    };
+
+    function eventWindowLoaded() {
+        console.log('页面加载完成~~~~');
+        var goOnBtn = document.getElementById("goOn");
+        goOnBtn.addEventListener('click', goOnGame, false);
+        //input事件
+        function goOnGame() {
+            canvasApp();
+        }
+        canvasApp()//主函数
+    }
+
+    function canvasSupport() {
+        return Modernizr.canvas;
+    }
+
+    function canvasApp() {
+        if (!canvasSupport) {
+            return;
+        }
+        //定义局部变量，局限本地封装的函数内
+        var guesses = 0;//保存玩家按键次数
+        var message = 'Guess The Letter From a (lower) to z(higher)';//玩法提示
+        var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];//位置，与随机字母
+        var today = new Date();//保存当前日期，显示用
+        var letterToGuess = '';//保存当前被猜的秘密字母
+        var higherOrLower = '';//变量存储文本，基于随机字母的位置
+        var letterGuessed;//保存已经猜过的字母集合
+        var gameOver = false;//
+        var theCanvase = document.getElementById("canvasOne");
+        var ctx = theCanvase.getContext("2d");
+
+        //初始化游戏
+        function initGame() {
+            var formElement = document.getElementById("createImageData");
+            var letterIndex = Math.floor(Math.random() * letters.length);//向下取舍
+            letterToGuess = letters[letterIndex];
+            guesses = 0;
+            letterGuessed = [];
+            gameOver = false;
+            window.addEventListener('keydown', eventKeyPressed, true);
+            formElement.addEventListener('click', createImageDataPressed, false);
+            //canvas绘图函数调用
+            drawScreen();
+        }
+
+        initGame();
+        //input事件
+        function createImageDataPressed() {
+            // var image = theCanvase.toDataURL("image/png");
+            // var w=window.open(theCanvase.toDataURL(), 'canvasImage', 'left=0,top=0,width=' + theCanvase.width + ',height' + theCanvase.height + ',toolbar=0,resizable=0');
+            // w.document.write("<img src='"+image+"' alt='from canvas'/>");
+            var image = theCanvase.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            window.location.href=image; // it will save locally
+        }
+
+        //键盘按下事件
+        function eventKeyPressed(e) {
+            if (!gameOver) {
+                //检测玩家按下的是哪个键
+                var letterPressed = String.fromCharCode(e.keyCode);//该方法是 String 的静态方法，字符串中的每个字符都由单独的数字 Unicode 编码指定
+                letterPressed = letterPressed.toLowerCase();//字母转化为小写，及时打开大写
+                guesses++;//增加变量计数
+                letterGuessed.push(letterPressed);//将字母添加到数组中
+                //检测游戏当前状态，给予玩家反馈。
+                if (letterPressed == letterToGuess) {
+                    gameOver = true;
+                } else {
+                    var letterIndex = letters.indexOf(letterToGuess);//获取letterToGuess的在letters数组中索引
+                    var guessIndex = letters.indexOf(letterPressed);//获取letterPressed的在letters数组中索引
+                    console.log(guessIndex);
+                    if (guessIndex < 0) {//guessIndex返回-1也就是按的不是字母
+                        higherOrLower = 'That is not a letter';
+                    } else if (guessIndex > letterIndex) {
+                        higherOrLower = 'Lower';
+                    } else {
+                        higherOrLower = 'Higher';
+                    }
+                }
+                drawScreen();
+            }
+        }
+
+        //实际的CanvasAPI代码
+        function drawScreen() {
+            //背景
+            /**绘制一个红色的矩形**/
+            ctx.fillStyle = "#ffffaa";//设置fillStyle属性可以是CSS颜色，渐变，或图案。fillStyle 默认设置是#000000（黑色）
+            /**在画布上绘制 150x75 的矩形，从左上角开始 (0,0)。**/
+            ctx.fillRect(0, 0, 500, 300);//fillRect(x,y,width,height) 方法定义了矩形当前的填充方式
+            //边框
+            ctx.strokeStyle = '#000000';
+            ctx.strokeRect(5, 5, 490, 290);//相对canvas元素 左上角x坐标，y坐标，边框的宽度和高度
+            ctx.textBaseline = 'top';//设置字体垂直对齐方式
+            //日期
+            ctx.fillStyle = '#000000';
+            ctx.font = '10px Sans-Serif';
+            ctx.fillText(today, 150, 10);
+            //消息
+            ctx.fillStyle = '#FF0000';
+            ctx.font = '14px Sans-Serif';
+            ctx.fillText(message, 125, 30);
+            //猜测的次数
+            ctx.fillStyle = '#109910';
+            ctx.font = '16px Sans-Serif';
+            ctx.fillText('Guesses:' + guesses, 215, 50);
+            //显示Lower或者Higher
+            ctx.fillStyle = '#000000';
+            ctx.font = '16px Sans-Serif';
+            ctx.fillText('higherOrLower:' + higherOrLower, 150, 125);
+            //猜过的字母
+            ctx.fillStyle = "#FF0000";
+            ctx.font = '16px Sans-Serif';
+            ctx.fillText('Letters Guessed:' + letterGuessed.toString(), 10, 260);
+            //游戏结束显示
+            if (gameOver) {
+                ctx.fillStyle = '#FF0000';//设置文本颜色
+                ctx.font = "40px Arial";//font - 定义字体
+                ctx.fillText("You Got It!", 150, 180);
+            }
+        }
+    }
+
+
+</script>
+</html>
